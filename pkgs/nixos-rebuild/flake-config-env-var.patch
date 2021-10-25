@@ -1,0 +1,25 @@
+diff --git a/pkgs/os-specific/linux/nixos-rebuild/nixos-rebuild.sh b/pkgs/os-specific/linux/nixos-rebuild/nixos-rebuild.sh
+index 198a6eae600..a948dbe62a0 100755
+--- a/pkgs/os-specific/linux/nixos-rebuild/nixos-rebuild.sh
++++ b/pkgs/os-specific/linux/nixos-rebuild/nixos-rebuild.sh
+@@ -307,10 +307,16 @@ if [ -z "$_NIXOS_REBUILD_REEXEC" ]; then
+     export PATH=@nix@/bin:$PATH
+ fi
+ 
+-# Use /etc/nixos/flake.nix if it exists. It can be a symlink to the
+-# actual flake.
+-if [[ -z $flake && -e /etc/nixos/flake.nix ]]; then
+-    flake="$(dirname "$(readlink -f /etc/nixos/flake.nix)")"
++# Attempt to load NIXOS_CONFIG as a flake, or /etc/nixos/flake.nix as
++# a fallback. It can be a symlink to the actual flake.
++defaultFlake=${NIXOS_CONFIG:-/etc/nixos/flake.nix}
++if [[ -z $flake ]]; then
++    if [[ -d $defaultFlake ]]; then
++        defaultFlake=$defaultFlake/flake.nix
++    fi
++    if [[ -e $defaultFlake ]]; then
++        flake="$(dirname "$(readlink -f "$defaultFlake")")"
++    fi; echo "Flake set to $flake"
+ fi
+ 
+ # Re-execute nixos-rebuild from the Nixpkgs tree.

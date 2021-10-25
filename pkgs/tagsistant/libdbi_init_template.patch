@@ -1,0 +1,16 @@
+diff --git a/src/sql.c b/src/sql.c
+index 085942f..fa138d5 100644
+--- a/src/sql.c
++++ b/src/sql.c
+@@ -101,9 +101,9 @@ void tagsistant_db_init()
+ 	 * initialize DBI library
+ 	 */
+ #if TAGSISTANT_REENTRANT_DBI
+-	dbi_initialize_r(NULL, &(tagsistant.dbi_instance));
++	dbi_initialize_r("@libdbiDrivers@/lib/dbd", &(tagsistant.dbi_instance));
+ #else
+-	dbi_initialize(NULL);
++	dbi_initialize("@libdbiDrivers@/lib/dbd");
+ #endif
+ 
+ #if TAGSISTANT_USE_QUERY_MUTEX
